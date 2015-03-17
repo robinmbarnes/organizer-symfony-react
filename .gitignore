@@ -32,3 +32,10 @@
 
 # Composer PHAR
 /composer.phar
+
+#Node
+node_modules/
+npm-debug.log
+
+#Fronted built code
+dist/
