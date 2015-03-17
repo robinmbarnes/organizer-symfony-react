@@ -1,0 +1,30 @@
+@import './mixins';
+@import './helpers';
+@import './modules';
+
+.icon-delete {
+  font-size: 12px;
+}
+
+.todo-label {
+  padding: 10px 12px;
+}
+
+.todo-item {
+  .todo-item-complete {
+    color: lightgrey;
+    text-decoration: line-through;
+  }
+  &.ng-leave {
+    -webkit-transition:0.5s linear all;
+    transition:0.5s linear all;
+  }
+  &.ng-leave {
+    opacity: 1;
+    height: 100%;
+    &.ng-leave-active {
+      opacity: 0;
+      height: 0;
+    }
+  }
+}

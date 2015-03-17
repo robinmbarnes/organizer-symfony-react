@@ -1,0 +1,4 @@
+services:
+#    organizer_client.example:
+#        class: Organizer\Bundle\ClientBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

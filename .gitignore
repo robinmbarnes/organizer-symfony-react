@@ -39,3 +39,6 @@ npm-debug.log
 
 #Fronted built code
 dist/
+
+#ide
+.idea/
