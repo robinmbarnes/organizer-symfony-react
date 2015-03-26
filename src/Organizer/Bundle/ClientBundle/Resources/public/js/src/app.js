@@ -1,7 +1,7 @@
-var angular = require('angular');
-var angularAnimate = require('angular-animate');
-angular.module('OrganizerApp', ['ngAnimate']);
+var React = require('react');
+var TodoList = require('./components/TodoList.react');
 
-require('./services');
-require('./directives');
-require('./controllers');
+React.render(
+  <TodoList/>,
+  document.getElementById('todo-list')
+);

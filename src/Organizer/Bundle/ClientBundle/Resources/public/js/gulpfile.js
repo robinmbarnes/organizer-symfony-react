@@ -9,13 +9,15 @@ var sourcemaps = require('gulp-sourcemaps');
 var sass = require('gulp-sass');
 var minifyCSS = require('gulp-minify-css');
 var watch = require('gulp-watch');
-var glob = require('glob');
+var reactify = require('reactify');
 
 var getBundleName = function () {
   var version = require('./package.json').version;
   var name = require('./package.json').name;
   return version + '.' + name + '.' + 'min';
 };
+
+gulp.task('build', ['build-js', 'build-css']);
 
 gulp.task('build-js', function() {
 
@@ -26,6 +28,7 @@ gulp.task('build-js', function() {
 
   var bundle = function() {
     return bundler
+      .transform(reactify)
       .bundle()
       .pipe(source(getBundleName() + '.js'))
       .pipe(buffer())
