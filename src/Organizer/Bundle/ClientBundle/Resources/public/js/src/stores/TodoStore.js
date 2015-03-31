@@ -4,8 +4,9 @@ var assign = require('object-assign');
 var TodoConstants = require('../constants/TodoConstants');
 var http = $;
 
-var CHANGE_EVENT = 'change';
 var todos = null;
+
+'use strict';
 
 function fetchTodos (callback) {
   http.get('/api/todo/')
@@ -17,11 +18,14 @@ function fetchTodos (callback) {
       callback(null, data);
     });
 }
+
 var TodoStore = assign(EventEmitter.prototype, {
 
   getAll: function () {
     if(todos === null) {
-      fetchTodos(this.emitChange.bind(this));
+      fetchTodos(function () {
+        this.emit(TodoConstants.TODO_LIST_CHANGE);
+      }.bind(this));
     }
     return (todos || {});
   },
@@ -33,22 +37,48 @@ var TodoStore = assign(EventEmitter.prototype, {
     })
       .done(function () {
         delete todos[id];
-        this.emitChange();
+        this.emit(TodoConstants.TODO_LIST_CHANGE);
       }.bind(this));
   },
 
-  emitChange: function () {
-    this.emit(CHANGE_EVENT);
+  create: function (title) {
+    http.ajax({
+      url: '/api/todo/',
+      type: 'post',
+      dataType: 'json',
+      data: JSON.stringify({
+        title: title
+      })
+    })
+      .done(function (data) {
+        todos[data.id] = data;
+        this.emit(TodoConstants.TODO_LIST_CHANGE);
+        this.emit(TodoConstants.TODO_CREATE_SUCCESS);
+      }.bind(this));
   },
 
-  addChangeListener: function (callback) {
-    this.on(CHANGE_EVENT, callback);
+  addListener: function (eventName, callback) {
+    this.on(eventName, callback);
   },
 
-  removeChangeListener: function (callback) {
-    this.removeListener(CHANGE_EVENT, callback);
+  removeListener: function (eventName, callback) {
+    this.removeListener(eventName, callback);
   }
 
+});
+
+var ActionHandlers = {};
+ActionHandlers[TodoConstants.TODO_CREATE] = function (action) {
+  var title = action.title.trim();
+  TodoStore.create(title);
+};
+
+AppDispatcher.register(function (action) {
+  if(typeof ActionHandlers[action.actionType] !== 'function') {
+    return;//No op. Not an error not to have a hander, action may not be meant for this store
+  }
+
+  ActionHandlers[action.actionType].call(AppDispatcher, action);
 });
 
 module.exports = TodoStore;

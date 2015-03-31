@@ -11,7 +11,7 @@
 }
 
 .todo-item {
-  .todo-item-complete {
+  &.todo-item-complete {
     color: lightgrey;
     text-decoration: line-through;
   }
